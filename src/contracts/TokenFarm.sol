@@ -8,9 +8,10 @@ contract TokenFarm {
     DappToken public dappToken;
     DaiToken public daiToken;
 
-    address[] public staker;
+    address[] public stakers;
     mapping(address => uint) public stakingBalance;
-    mapping(address => bool) public hasstaked;
+    mapping(address => bool) public hasStaked;
+    mapping(address => bool) public isStaking;
 
     constructor(DappToken _dappToken, DaiToken _daiToken) public{
         dappToken = _dappToken;
@@ -24,6 +25,15 @@ contract TokenFarm {
 
         // Update staking balance
         stakingBalance[msg.sender] = stakingBalance[msg.sender] + _amount; 
+
+        // Add user to array of stakers *only* if they've staked already
+         if(!hasStaked[msg.sender]){
+            stakers.push(msg.sender);
+         }
+
+         // Update staking status
+         isStaking[msg.sender] = true;
+         hasStaked[msg.sender] = true;
     }
 
     // Unstake tokens(Withdraw)
